@@ -3,6 +3,8 @@ const pastPeriodContainer = document.getElementById("past-periods");
 const newPeriodFormEl = document.getElementsByTagName("form")[0];
 const startDateInputEl = document.getElementById("start-date");
 const endDateInputEl = document.getElementById("end-date");
+const installBtn = document.getElementById("install-btn");
+let deferredPrompt;
 
 renderPastPeriods();
 
@@ -72,3 +74,17 @@ function formatDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", { timeZone: "UTC" });
 }
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
+installBtn.addEventListener("click", async () => {
+  if (!deferredPrompt) return;
+
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+
+  deferredPrompt = null;
+});
